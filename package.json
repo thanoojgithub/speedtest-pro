@@ -1,0 +1,12 @@
+{
+  "name": "speedtest-pro",
+  "version": "1.0.0",
+  "description": "Enterprise-Grade Zero-Dependency Speed Test",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
