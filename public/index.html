@@ -7,20 +7,52 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="dark-theme">
 <div class="container">
     <header class="header">
-        <!-- Icon locked to the far corner -->
         <div class="logo-icon">
-            <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="40" stroke="#E5E7EB" stroke-width="8"/>
-                <path d="M50 10A40 40 0 1 1 20 75" stroke="#E11D48" stroke-width="10" stroke-linecap="round"/>
-                <path d="M55 35L40 55H60L45 75" stroke="#E11D48" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="50" cy="50" r="4" fill="#111827"/>
+            <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#CBD5E1" />
+                        <stop offset="40%" stop-color="#E11D48" />
+                        <stop offset="100%" stop-color="#881337" />
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <!-- Outer Decorative Ring -->
+                <circle cx="60" cy="60" r="55" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="4 4"/>
+                
+                <!-- Main Speed Arc -->
+                <path d="M30 85 A 40 40 0 1 1 90 85" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round" filter="url(#glow)"/>
+                
+                <!-- Curved Text along the arc -->
+                <path id="textPath" d="M30 85 A 40 40 0 1 1 90 85" fill="none" />
+                <text fill="white" font-size="7" font-weight="bold" letter-spacing="2" text-anchor="middle">
+                    <textPath href="#textPath" startOffset="50%" side="right" dominant-baseline="central">SPEED TEST PRO</textPath>
+                </text>
+                
+                <!-- The Needle (Modern Thin Style) -->
+                <g transform="rotate(-45 60 60)">
+                    <line x1="60" y1="60" x2="60" y2="25" stroke="#0F172A" stroke-width="4" stroke-linecap="round">
+                        <animateTransform attributeName="transform" type="rotate" from="-45 60 60" to="135 60 60" dur="12s" repeatCount="indefinite" />
+                    </line>
+                    <circle cx="60" cy="60" r="6" fill="#0F172A" />
+                </g>
+                
+                <!-- Scale Markers -->
+                <line x1="30" y1="85" x2="25" y2="85" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+                <line x1="60" y1="20" x2="60" y2="15" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+                <line x1="90" y1="85" x2="95" y2="85" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
             </svg>
         </div>
 
-        <!-- Title Group locked to center -->
         <div class="logo-group">
             <h1 class="main-logo">
                 SPEED<span class="red-text">TEST</span><span class="pro-badge">PRO</span>
@@ -30,7 +62,7 @@
     </header>
 
     <div class="hero-grid">
-        <div class="master-card">
+        <div class="master-card glass">
             <span class="card-label">Download Performance</span>
             <div class="value-container">
                 <span id="main-dl" class="main-value">0</span><span class="unit">Mbps</span>
@@ -42,7 +74,7 @@
             </div>
         </div>
 
-        <div class="master-card">
+        <div class="master-card glass">
             <span class="card-label">Upload Performance</span>
             <div class="value-container">
                 <span id="main-ul" class="main-value">0</span><span class="unit">Mbps</span>
@@ -56,27 +88,28 @@
     </div>
 
     <div class="action-area">
-        <button id="start-btn">START TEST</button>
+        <button id="start-btn" class="glow-button">START TEST</button>
         <p id="status">Ready for enterprise-grade analysis</p>
+        <button id="toggle-tech" class="toggle-btn" style="display: none;">Show Technical Details</button>
     </div>
 
     <div id="technical-section" class="tech-section" style="display: none;">
         <div class="tech-3-grid">
-            <div class="tech-box">
+            <div class="tech-box glass">
                 <h3 class="red-border">Network Health</h3>
                 <div class="detail-row"><span class="label">Unloaded Ping</span> <span id="ping">-</span></div>
                 <div class="detail-row"><span class="label">Jitter (Variance)</span> <span id="jitter">-</span></div>
                 <div class="detail-row"><span class="label">DNS Lookup</span> <span id="dns-ping">-</span></div>
                 <div class="detail-row"><span class="label">TCP Handshake</span> <span id="tcp-ping">-</span></div>
             </div>
-            <div class="tech-box">
+            <div class="tech-box glass">
                 <h3 class="red-border">ISP Server Details</h3>
                 <div class="detail-row"><span class="label">ISP Provider</span> <span id="srv-isp">-</span></div>
                 <div class="detail-row"><span class="label">Organization</span> <span id="srv-org">-</span></div>
                 <div class="detail-row"><span class="label">ASN / IP</span> <span id="srv-ip">-</span></div>
                 <div class="detail-row"><span class="label">Data Center</span> <span id="srv-loc">-</span></div>
             </div>
-            <div class="tech-box">
+            <div class="tech-box glass">
                 <h3 class="red-border">System & Hardware</h3>
                 <div class="detail-row"><span class="label">Device / OS</span> <span id="dev-os">-</span></div>
                 <div class="detail-row"><span class="label">Browser Engine</span> <span id="dev-browser">-</span></div>

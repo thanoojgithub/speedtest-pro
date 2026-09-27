@@ -85,16 +85,27 @@ async function measurePing() {
 
 async function runTest() {
     startBtn.disabled = true;
+    startBtn.innerText = "TESTING...";
     techSection.style.display = 'none';
+    
+    // Add a fade-in animation to the container
+    document.querySelector('.container').style.opacity = '0.8';
+    document.querySelector('.container').style.transition = 'opacity 0.5s ease';
+
     try {
+        statusText.innerText = "Gathering system and server diagnostics...";
+        await Promise.all([fetchLocalSystemInfo(), fetchServerInfo()]);
+        
         statusText.innerText = "Measuring baseline network health...";
         const pings = [];
         for (let i = 0; i < 10; i++) { pings.push(await measurePing()); }
         const avgPing = pings.reduce((a, b) => a + b) / pings.length;
         let jitterSum = 0;
         for (let i = 1; i < pings.length; i++) { jitterSum += Math.abs(pings[i] - pings[i-1]); }
-        ui.ping.innerText = avgPing.toFixed(0) + " ms";
-        ui.jitter.innerText = (jitterSum / (pings.length - 1)).toFixed(0) + " ms";
+        
+        // Smoothly update values
+        animateValue(ui.ping, avgPing.toFixed(0) + " ms");
+        animateValue(ui.jitter, (jitterSum / (pings.length - 1)).toFixed(0) + " ms");
 
         const resource = performance.getEntriesByName(window.location.origin + '/ping')[0];
         if (resource) {
@@ -137,12 +148,57 @@ async function runTest() {
         mainUl.innerText = finalUlMbps.toFixed(1);
 
         statusText.innerText = "Analysis Complete";
-        techSection.style.display = 'block';
+        techSection.style.display = 'none';
+        const toggleBtn = document.getElementById('toggle-tech');
+        if (toggleBtn) toggleBtn.style.display = 'inline-block';
     } catch (error) {
         statusText.innerText = "Error: " + error.message;
-    } finally { startBtn.disabled = false; }
+    } finally { 
+        startBtn.disabled = false; 
+        startBtn.innerText = "START TEST";
+        document.querySelector('.container').style.opacity = '1';
+    }
 }
 
-fetchServerInfo();
-fetchLocalSystemInfo();
 startBtn.addEventListener('click', runTest);
+
+// Helper function for smooth value transitions
+function animateValue(element, finalValue) {
+    if (typeof finalValue === 'string' && finalValue.includes(' ')) {
+        const [value, unit] = finalValue.split(' ');
+        const num = parseFloat(value);
+        if (isNaN(num)) {
+            element.innerText = finalValue;
+            return;
+        }
+        
+        let start = 0;
+        const duration = 800;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentVal = Math.floor(progress * num);
+            element.innerText = currentVal + " " + unit;
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    } else {
+        element.innerText = finalValue;
+    }
+}
+
+// Toggle Technical Section
+const toggleTechBtn = document.getElementById('toggle-tech');
+if (toggleTechBtn) {
+    toggleTechBtn.addEventListener('click', () => {
+        const isHidden = techSection.style.display === 'none';
+        techSection.style.display = isHidden ? 'block' : 'none';
+        toggleTechBtn.innerText = isHidden ? 'Hide Technical Details' : 'Show Technical Details';
+        
+        if (isHidden) {
+            techSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+}
