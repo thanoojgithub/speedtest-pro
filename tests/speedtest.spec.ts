@@ -5,7 +5,9 @@ test.describe('SpeedTest Pro End-to-End Performance Test', () => {
     
     test('should execute full speed test and verify dynamic technical details', async ({ page }) => {
         // 1. Navigate to the application
-        await page.goto('/');
+        // Using a full URL or environment variable is required for Playwright
+        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        await page.goto(baseUrl);
 
         // 2. Verify initial state: Technical section should be hidden, button should be enabled
         const startBtn = page.locator('#start-btn');
