@@ -4,7 +4,8 @@
   "description": "Enterprise-Grade Zero-Dependency Speed Test",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "npx playwright test"
   },
   "engines": {
     "node": ">=16.0.0"
