@@ -4,47 +4,109 @@ Enterprise-grade, zero-dependency browser and network benchmark application. Des
 
 ---
 
-## 🚀 Quick Start (Running with Docker or Node.js)
+---
 
-### Option 1: Run with Docker (Recommended)
+## ⚙️ Configuration Options
 
-No local Node.js installation is required. Run using the official Node container directly from your project directory:
+The application is configurable via standard environment variables:
 
-#### PowerShell (Windows):
-```powershell
-docker run -d --name speedtest-server -p 3000:3000 -v ${PWD}:/app -w /app node:24-slim node server.js
+| Environment Variable | Default Value | Description |
+| :--- | :--- | :--- |
+| `PORT` | `3000` | The local port the HTTP server binds to. |
+| `NODE_ENV` | `production` | Runtime mode (`development` or `production`). |
+
+To configure a custom port (e.g. `8080`):
+- **Docker**: `-e PORT=8080 -p 8080:8080`
+- **Node.js**: `PORT=8080 node server.js` (macOS/Linux) or `$env:PORT=8080; node server.js` (PowerShell)
+
+---
+
+## 🚀 Running & Stopping the Application
+
+### Option 1: Using Docker (Recommended)
+
+No local Node.js runtime is required.
+
+#### 1. Start the Container:
+- **Windows (PowerShell)**:
+  ```powershell
+  docker run -d --name speedtest-server -p 3000:3000 -v ${PWD}:/app -w /app node:24-slim node server.js
+  ```
+- **macOS / Linux (Bash)**:
+  ```bash
+  docker run -d --name speedtest-server -p 3000:3000 -v "$(pwd)":/app -w /app node:24-slim node server.js
+  ```
+
+#### 2. Restart the Container:
+```bash
+docker restart speedtest-server
 ```
 
-#### Bash (macOS / Linux):
+#### 3. Stop the Container:
 ```bash
-docker run -d --name speedtest-server -p 3000:3000 -v "$(pwd)":/app -w /app node:24-slim node server.js
+docker stop speedtest-server
 ```
 
-#### Check Server Logs:
+#### 4. Remove the Container:
 ```bash
-docker logs -f speedtest-server
-```
-
-#### Stop the Server:
-```bash
-docker stop speedtest-server && docker rm speedtest-server
+docker rm speedtest-server
 ```
 
 ---
 
-### Option 2: Run with Local Node.js
+### Option 2: Using Local Node.js
 
-If you have Node.js (v18+) installed locally:
-
+#### 1. Start the Server:
 ```bash
 node server.js
 ```
 
-Once running, the terminal will confirm:
-```
-🚀 Server running at http://localhost:3000
-🌍 Server Identity Confirmed: Edge Node - <City>, <Country>
-```
+#### 2. Stop the Server:
+Press `Ctrl + C` in your terminal window.
+
+---
+
+## 🔍 Checking Logs & Debugging
+
+### 1. Server-Side Logs & Diagnostics
+
+- **Stream Live Docker Logs**:
+  ```bash
+  docker logs -f speedtest-server
+  ```
+- **Inspect Last 50 Log Lines**:
+  ```bash
+  docker logs --tail 50 speedtest-server
+  ```
+- **Verify Server Health & JSON Metadata Endpoint**:
+  ```bash
+  curl -i http://localhost:3000/server-info
+  ```
+  Expected output includes node identity, ISP, AS number, and architecture:
+  ```json
+  {"isp":"...","org":"...","city":"...","country":"...","as":"...","ip":"...","nodeName":"Edge Node - ..."}
+  ```
+
+- **Verify Ping / Health Endpoint**:
+  ```bash
+  curl -i http://localhost:3000/ping
+  ```
+  Expected response: `HTTP/200 OK` with body `pong` and `Timing-Allow-Origin: *`.
+
+### 2. Client-Side Browser Debugging
+
+1. Open DevTools in your browser:
+   - **Windows / Linux**: Press `F12` or `Ctrl + Shift + I`
+   - **macOS**: Press `Cmd + Option + I`
+2. **Console Tab**:
+   - Check for real-time connection status messages, sliding-window throughput recalculations, or test cancellation notifications.
+3. **Network Tab**:
+   - Filter by `Fetch/XHR`.
+   - Observe parallel multi-stream chunks for download (`speed.cloudflare.com/__down` or `/proxy-download`).
+   - Observe parallel chunk uploads (`speed.cloudflare.com/__up` or `/proxy-upload`).
+   - Inspect response headers for `Timing-Allow-Origin: *` and `Cache-Control: no-store`.
+4. **Performance Tab**:
+   - Run a profile during a test to inspect CPU utilization, WebGL GPU context, and real-time garbage collection behavior.
 
 ---
 
