@@ -1,5 +1,4 @@
-import { expect, By } from '@playwright/test';
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test.describe('SpeedTest Pro End-to-End Performance Test', () => {
     
@@ -47,11 +46,11 @@ test.describe('SpeedTest Pro End-to-End Performance Test', () => {
             // We allow '-' for DNS/TCP pings as they are browser-dependent and often unavailable in headless mode
             if (selector === '#dns-ping' || selector === '#tcp-ping') {
                 if (value !== '-') {
-                    expect(value).toMatch(/\\d+/);
+                    expect(value).toMatch(/\d+/);
                 }
             } else {
                 expect(value).not.toBe('-');
-                expect(value).toMatch(/\\d+/);
+                expect(value).toMatch(/\d+/);
             }
         }
 
