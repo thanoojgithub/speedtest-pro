@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "npx playwright test"
+    "test": "node --test tests/server.test.js"
   },
   "engines": {
     "node": ">=16.0.0"
