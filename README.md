@@ -213,3 +213,19 @@ SpeedTest Pro uses an open measurement model adhering to web standards:
 4. **Zero Data Retention & Privacy**:
    - Never logs or stores client speed data on the server.
    - Sanitizes client cookies, local/session storage, cache storage, and performance logs in the `finally` block on completion or interrupt.
+
+---
+
+## 📄 License & Apache 2.0 Compliance
+
+This project is licensed under the **Apache License, Version 2.0** (the "License"). You may obtain a copy of the License at:
+
+```
+http://www.apache.org/licenses/LICENSE-2.0
+```
+
+### Compliance Checklist:
+- **Permissive Open-Source**: Allows commercial and private use, modification, distribution, and patent grant.
+- **Zero Proprietary/Scraped Endpoints**: Completely devoid of private reverse-engineered APIs, tokens, or scraped assets.
+- **Standards-Adherent**: Operates strictly on standard W3C Web APIs (`fetch`, `Streams`, `PerformanceResourceTiming`) and open HTTP endpoints.
+- **Attribution & Notice**: Full license terms are detailed in the repository's [LICENSE](file:///d:/codeBase/speedtest-pro/LICENSE) file with standard license headers on source files.
