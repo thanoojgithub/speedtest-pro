@@ -1,0 +1,8 @@
+node_modules
+.git
+.github
+.idea
+.vscode
+test-results
+playwright-report
+*.md

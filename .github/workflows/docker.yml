@@ -1,0 +1,35 @@
+name: Docker Container Build & Health Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  docker-build:
+    name: Build & Verify Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: |
+          docker build -t speedtest-pro:ci .
+
+      - name: Test Container Run & HTTP Health Check
+        run: |
+          docker run -d --name test-speedtest -p 3000:3000 speedtest-pro:ci
+          sleep 4
+          curl -f http://localhost:3000/ping || exit 1
+          curl -f http://localhost:3000/server-info || exit 1
+          docker logs test-speedtest
+          docker stop test-speedtest && docker rm test-speedtest

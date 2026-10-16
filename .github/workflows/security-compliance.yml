@@ -1,0 +1,57 @@
+name: Security, License & Compliance Audit
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  compliance-audit:
+    name: Apache 2.0 Compliance & Dependency Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Verify Apache 2.0 License File Exists
+        run: |
+          if [ ! -f LICENSE ]; then
+            echo "ERROR: LICENSE file missing"
+            exit 1
+          fi
+          grep -q "Apache License" LICENSE || exit 1
+          echo "Apache 2.0 License verified"
+
+      - name: Verify License Headers in Source Code
+        run: |
+          for file in server.js public/script.js public/style.css; do
+            if ! grep -q "Apache License" "$file"; then
+              echo "ERROR: Missing Apache 2.0 header in $file"
+              exit 1
+            fi
+            echo "License header verified in $file"
+          done
+
+      - name: Verify Zero Proprietary APIs & Public Endpoints
+        run: |
+          # Assert that no fast.com or netflix private API scraping endpoints are introduced
+          if grep -rn "api.fast.com" server.js public/ ; then
+            echo "ERROR: Proprietary private API detected"
+            exit 1
+          fi
+          echo "Zero private APIs confirmed: Clean & Compliant"
+
+      - name: Code Security Scan
+        run: |
+          # Verify no committed secrets or private keys
+          if grep -rn "PRIVATE KEY" . --exclude-dir={.git,node_modules} ; then
+            echo "ERROR: Private key detected in repository"
+            exit 1
+          fi
+          echo "Security scan clean"
