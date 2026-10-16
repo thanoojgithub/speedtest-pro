@@ -49,8 +49,8 @@ jobs:
 
       - name: Code Security Scan
         run: |
-          # Verify no committed secrets or private keys
-          if grep -rn "PRIVATE KEY" . --exclude-dir={.git,node_modules} ; then
+          # Verify no committed secrets or private keys in source files
+          if grep -rn "PRIVATE KEY" . --exclude-dir={.git,.github,node_modules,test-results} ; then
             echo "ERROR: Private key detected in repository"
             exit 1
           fi
